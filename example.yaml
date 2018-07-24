@@ -1,0 +1,44 @@
+output:
+  logstash:
+    net_max: 0
+    hosts:
+    - "localhost:8636"
+heatbeat:
+  url: http://172.16.1.168:8855/open/api/v2/agent/heartbeat?tenantId=1&hostname={}&ip={}&os={}&targetOs=aix&agent_type=jfilebeat
+  interval: -1
+logging:
+  to_files: false
+  level: "info"
+  files:
+    keepfiles: 5
+    path: "/tmp"
+    name: "mybeat.log"
+filebeat:
+  idle_timeout: "100ms"
+  prospectors:
+  - tail_files: false
+    paths:
+    - "/tmp/log/*.log"
+    encoding: "utf-8"
+#    multiline:
+#      negate: true
+#      pattern: 'start'
+#      match: "after"
+#      timeout: "200s"
+#      max_lines: 100
+    fields:
+      keeptype: "business"
+      logtype: "no_log"
+      appname: "ppp"
+      tag: "ppp"
+      user_token: "00504969234311e6ba8cac853da49b78"
+      uuid: "a78cd78f-7864-402f-9ab1-799a8ab551df_filebeat"
+      tenant_id: 1
+metric:
+  encoding: "utf-8"
+  fields:
+    keeptype: "business"
+    logtype: "json_metric"
+    appname: "pppm"
+    tag: "pppm"
+    user_token: "kRhisbdoTQMCZU5KqQqGkQ7sDA7BM9kpldnQ5Nf2al8ER9yp"
