@@ -2,12 +2,10 @@ package com.dtstack.jfilebeat.manager;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import com.dtstack.jfilebeat.common.bean.Config;
 import com.dtstack.jfilebeat.common.bean.FileState;
 import com.dtstack.jfilebeat.common.bean.Config.Prospector;
@@ -16,9 +14,6 @@ import com.dtstack.jfilebeat.common.exception.FilebeatException;
 import com.dtstack.jfilebeat.common.logger.Log;
 import com.dtstack.jfilebeat.common.ratelimit.RateLimiter;
 import com.dtstack.jfilebeat.common.thread.NamedThreadFactory;
-import com.dtstack.jfilebeat.common.utils.HttpUtils;
-import com.dtstack.jfilebeat.common.utils.RuntimeUtils;
-import com.dtstack.jfilebeat.common.utils.StringUtils;
 import com.dtstack.jfilebeat.net.DistributedNetClient;
 import com.dtstack.jfilebeat.stream.FileStream;
 
@@ -51,20 +46,6 @@ public class FileManager {
 		
 	}
 
-	public void heartbeat() throws IOException {
-		if ("-1".equals(config.getHeartbeat().getUrl())) {
-			return;
-		}
-
-		String hostname = StringUtils.urlEncode(RuntimeUtils.currentHostName(), "utf-8");
-		String ip = RuntimeUtils.currentLocalIps();
-		String os = StringUtils.urlEncode(RuntimeUtils.currentOS(), "utf-8");
-		String url = StringUtils.format(config.getHeartbeat().getUrl(), hostname, ip, os);
-		logger.info("start heartbeat,url={}", url);
-
-		HttpUtils.sendGet(url, 30000);
-	}
-
 	public void init() {
 
 		logger.info("init start");
@@ -77,27 +58,7 @@ public class FileManager {
 		offsetManager.init();
 		netClient.init();
 		
-		initHeartBeat();
-
 		logger.info("init end");
-	}
-
-	public void initHeartBeat() {
-		if(config.getHeartbeat().getInterval() < 1) {
-			return;
-		}
-		
-		exec.scheduleWithFixedDelay(new Runnable() {
-
-			public void run() {
-				try {
-					heartbeat();
-				} catch (Exception e) {
-					logger.error("heartbeat error", e);
-				}
-
-			}
-		}, 0, config.getHeartbeat().getInterval(), TimeUnit.SECONDS);
 	}
 
 	public void createFile(File file, Prospector prospector) {

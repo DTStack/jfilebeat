@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import com.dtstack.jfilebeat.common.logger.Log;
 import com.dtstack.jfilebeat.net.DistributedNetClient;
-//import com.dtstack.sigar.Sg;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -26,7 +25,6 @@ import com.dtstack.jfilebeat.manager.FileManager;
 import com.dtstack.jfilebeat.manager.OffsetManager;
 import com.dtstack.jfilebeat.stream.FileStream;
 import com.dtstack.jfilebeat.watcher.FileWatcher;
-import com.dtstack.sigar.Sg;
 
 public class Bootstrap {
 	
@@ -34,7 +32,6 @@ public class Bootstrap {
 	private static Bootstrap boot; 
 	private String sinceDbPath = ".sincedb";
 	private String configPath = "conf/filebeat.yml";
-	private static long intervalCollect = 5*1000L;
 	private File configFile;
 	private long configFileLastModified;
 	private int idleTime;
@@ -42,7 +39,6 @@ public class Bootstrap {
 	private FileWatcher watcher;
 	private FileManager manager;
 	private static CommandLine line;
-	private static boolean startedSg = false;
 
 	public static void main(String[] args) {
 		
@@ -66,44 +62,6 @@ public class Bootstrap {
 		}
 	}
 
-	/**
-	 * <p>
-	 *     收集性能数据
-	 * </p>
-	 */
-	public static void collectSg(final Config config, final DistributedNetClient netClient){
-
-		if(startedSg){
-			logger.warn("collect sg started,ignore current action!!!");
-			return;
-		}
-		startedSg = true;
-		// 是否开启性能数据采集
-		if(line.hasOption("i")){
-			intervalCollect = line.hasOption("i")? Long.valueOf(line.getOptionValue("i")) : intervalCollect;
-			final String shellPath = line.hasOption("shell")? line.getOptionValue("shell") : "/shell";
-			final String nativePath = line.hasOption("native")? line.getOptionValue("native") : "/native";
-			final boolean console = line.hasOption("console")? line.getOptionValue("console").equals("t") : false;
-			Thread collectT = new Thread(new Runnable() {
-				public void run() {
-					Sg sg = Sg.getInstance();
-					sg.setInterval(intervalCollect);
-					sg.setNativePath(nativePath);
-					sg.setShellPath(shellPath);
-					sg.setAddFields(config.getMetric().getFields());
-					sg.setConsole(console);
-					sg.setDistributedNetClient(netClient);
-					sg.startCollect();
-					logger.warn("start collect system/host metrics ~_~");
-				}
-			});
-			collectT.setDaemon(true);
-			collectT.setName("collect-metric");
-			collectT.start();
-		}
-
-	}
-
 	public void init() {
 		
 		sinceDbPath = line.hasOption("s")? line.getOptionValue("s") : sinceDbPath;
@@ -122,9 +80,6 @@ public class Bootstrap {
 		
 		manager.init();
 		watcher.init();
-
-		// 采集性能数据
-		collectSg(config,netClient);
 
 	}
 	

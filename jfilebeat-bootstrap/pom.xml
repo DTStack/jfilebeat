@@ -3,13 +3,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<groupId>com.dtstack</groupId>
 	<artifactId>jfilebeat-bootstrap</artifactId>
-	<version>0.0.6</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 	<modelVersion>4.0.0</modelVersion>
 
-	<properties>
-		<repository.host>http://nexus.dev.dtstack.cn</repository.host>
-	</properties>
 	<build>
 		<resources>
 			<resource>
@@ -27,7 +24,7 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
-					<compilerVersion>1.7</compilerVersion>
+					<compilerVersion>1.5</compilerVersion>
 				</configuration>
 			</plugin>
 
@@ -109,35 +106,7 @@
 			<scope>compile</scope>
 		</dependency>
 
-		<dependency>
-			<groupId>com.dtstack</groupId>
-			<artifactId>jsigar</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<dependency>
-			<groupId>io.prometheus.jmx</groupId>
-			<artifactId>jmx_prometheus_javaagent</artifactId>
-			<version>0.10</version>
-		</dependency>
-
-
 	</dependencies>
-
-
-	<distributionManagement>
-		<repository>
-			<id>dtstack-release</id>
-			<name>Nexus Release Repository</name>
-			<url>${repository.host}/nexus/content/repositories/releases/</url>
-		</repository>
-		<snapshotRepository>
-			<id>dtstack-snapshot</id>
-			<name>Nexus Snapshot Repository</name>
-			<url>${repository.host}/nexus/content/repositories/snapshots/</url>
-		</snapshotRepository>
-	</distributionManagement>
-
 
 
 </project>

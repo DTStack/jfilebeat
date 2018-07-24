@@ -615,29 +615,8 @@ public class Config {
 		}
 	}
 
-	public static class Heartbeat {
-		private String url = "-1";
-		private int interval = -1;
-
-		public int getInterval() {
-			return interval;
-		}
-
-		public void setInterval(int interval) {
-			this.interval = interval;
-		}
-
-		public String getUrl() {
-			return url;
-		}
-
-		public void setUrl(String url) {
-			this.url = url;
-		}
-	}
 
 	private Output output = new Output();
-	private Heartbeat heartbeat = new Heartbeat();
 	private Logging logging = new Logging();
 	private Filebeat filebeat = new Filebeat();
 	private Metric metric = new Metric();
@@ -649,14 +628,6 @@ public class Config {
 	private Integer bulk_queue_size;
 	private Integer max_procs;
 	
-	public Heartbeat getHeartbeat() {
-		return heartbeat;
-	}
-
-	public void setHeartbeat(Heartbeat heartbeat) {
-		this.heartbeat = heartbeat;
-	}
-
 	public static Config getConfig() {
 		return config;
 	}
